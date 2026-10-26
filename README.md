@@ -15,7 +15,7 @@
 
 不需要自己持有 Mac。工程自带 `.github/workflows/build-ios.yml`，用 GitHub 的 macOS 环境编译不带签名的真机 IPA，再在 Windows 的 Sideloadly 中用自己的免费 Apple 账号签名安装。云端不需要 Apple 登录或证书。
 
-只把本 `OurLittleDays` 文件夹中的 App 工程上传为独立仓库；不要上传父目录网站，也不要上传 `data`、照片、账号文件、密码或证书。标准 GitHub 托管运行器在公开仓库免费；私有仓库受账号免费额度约束，不能保证无限免费。此流程只手动运行，15 分钟超时，产物仅保留 1 天。
+只把本 `OurLittleDays` 文件夹中的 App 工程上传为独立仓库；不要上传父目录网站，也不要上传 `data`、照片、账号文件、密码或证书。标准 GitHub 托管运行器在公开仓库免费；私有仓库受账号免费额度约束，不能保证无限免费。可手动运行；main 分支的 App 代码或编译配置更新时也会自动运行。15 分钟超时，产物仅保留 1 天。
 
 1. 建立独立 GitHub 仓库，把本目录内容放在仓库根目录，保留 `.github/workflows`。公开仓库会公开这份 App 源代码；当前工程不含私人照片、网站地址或账号。
 2. 在 Actions 中选择 Build unsigned iPhone app，点击 Run workflow。
@@ -25,7 +25,13 @@
 6. 按 iPhone 提示开启 Developer Mode/信任开发者，打开 App，填写网站服务地址。
 7. 免费签名约 7 天有效。可以开启 Sideloadly 的 Automatic Refresh；自动续签需要电脑、后台工具及手机连接条件满足，仍可能需要手动处理连接/登录失败。不是永久签名。
 
-此处仅准备了云编译配置，还没有创建 GitHub 仓库、运行云构建或生成 IPA；需要你登录 GitHub 后才能继续。
+已在 GitHub 的 macOS 环境完成首次真机 Release 编译，Xcode 16.4 / iPhoneOS SDK 18.5，结果 BUILD SUCCEEDED。安装包为 arm64、最低 iOS 17 的未签名 IPA。尚未执行 Apple 签名或真机安装。
+
+构建记录：https://github.com/henriclin/our-little-days-ios/actions/runs/40310953562
+
+本次下载：https://github.com/henriclin/our-little-days-ios/actions/runs/40310953562/artifacts/12644866961
+
+下载 ZIP 后解压，取得 OurLittleDays-unsigned.ipa，再导入 Sideloadly。产物过期后可重新运行 Actions 生成。
 
 ## 可借到 Mac 时：免费账号真机测试
 
@@ -42,7 +48,7 @@
 
 手机首次通过 TestFlight 安装后，可以开启自动更新，后续可覆盖更新而不用卸载重装。但每个构建从上传起最多可测试 90 天，需在到期前提供新的可用构建；自动更新本身不会延长旧构建的有效期。它是测试分发，不是永久免维护的私人发行。
 
-当前 Windows 环境仅准备了未签名工程，尚未执行 Mac 编译、苹果签名、审核或上传，也没有可用的 TestFlight 邀请链接。App 图标和上传所需的元数据仍需在正式打包前补齐。
+当前已完成免费云端编译；没有执行苹果签名、TestFlight 审核或上传，也没有 TestFlight 邀请链接。App 图标和上传所需的元数据仍需在正式打包前补齐。
 
 ## Ad Hoc 私人安装（备选）
 
@@ -58,7 +64,7 @@
 
     xcodebuild -project OurLittleDays.xcodeproj -scheme OurLittleDays -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
 
-当前 Windows 工作环境没有 Xcode/iOS SDK，未进行 Swift 编译或真机安装。此版本是待 Mac 验证的工程，不是可安装的 IPA。
+本地 Windows 环境没有 Xcode/iOS SDK；已通过 GitHub macOS 环境完成真机 Release 构建及打包，但尚未进行手机签名、安装和运行验证。未签名 IPA 无法直接在 iPhone 中点开安装。
 
 ## 后端现状
 

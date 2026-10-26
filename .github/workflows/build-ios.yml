@@ -1,0 +1,56 @@
+name: Build unsigned iPhone app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "OurLittleDays/**"
+      - "OurLittleDays.xcodeproj/**"
+      - ".github/workflows/build-ios.yml"
+
+concurrency:
+  group: ios-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Check out app source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Show build environment
+        run: xcodebuild -version
+      - name: Build for a real iPhone without a signing identity
+        run: |
+          xcodebuild \
+            -project OurLittleDays.xcodeproj \
+            -scheme OurLittleDays \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY='' \
+            build
+      - name: Package unsigned IPA for local Windows signing
+        run: |
+          mkdir -p package/Payload
+          ditto build/Build/Products/Release-iphoneos/OurLittleDays.app package/Payload/OurLittleDays.app
+          cd package
+          /usr/bin/zip -qr OurLittleDays-unsigned.ipa Payload
+      - name: Save the build for download
+        uses: actions/upload-artifact@v4
+        with:
+          name: OurLittleDays-unsigned-iPhone
+          path: package/OurLittleDays-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0

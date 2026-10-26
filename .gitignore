@@ -1,0 +1,17 @@
+# Local build and signing material
+build/
+package/
+DerivedData/
+**/xcuserdata/
+*.xcuserstate
+.DS_Store
+*.ipa
+*.p12
+*.p8
+*.cer
+*.mobileprovision
+.env
+.env.*
+# Website data must never be part of this standalone app repository
+data/
+public/
